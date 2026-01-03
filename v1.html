@@ -1,0 +1,1132 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>PRO LIVE TV | المشغل الذكي المتطور</title>
+    
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --hue-primary: 340;
+            --hue-accent: 190;
+            --hue-secondary: 260;
+
+            --primary-solid: hsl(var(--hue-primary), 80%, 60%);
+            --accent-solid: hsl(var(--hue-accent), 90%, 60%);
+            --secondary-solid: hsl(var(--hue-secondary), 80%, 60%);
+            
+            --gradient-primary: linear-gradient(135deg, hsl(var(--hue-primary), 80%, 60%), hsl(25, 90%, 60%));
+            --gradient-accent: linear-gradient(135deg, hsl(var(--hue-accent), 90%, 60%), hsl(210, 80%, 60%));
+            --gradient-secondary: linear-gradient(135deg, hsl(var(--hue-secondary), 80%, 60%), hsl(240, 80%, 60%));
+            
+            --bg-body: hsl(230, 20%, 8%);
+            --bg-surface: hsla(230, 20%, 12%, 0.9);
+            --bg-surface-hover: hsla(230, 20%, 16%, 0.95);
+            --bg-navbar: hsla(230, 25%, 8%, 0.98);
+            --bg-dropdown: hsla(230, 25%, 10%, 0.98);
+            
+            --text-main: hsl(0, 0%, 100%);
+            --text-muted: hsl(230, 10%, 70%);
+            
+            --border-color: hsla(0, 0%, 100%, 0.08);
+            --shadow-lg: 0 25px 50px -12px hsla(0, 0%, 0%, 0.5);
+            --shadow-nav: 0 8px 32px hsla(0, 0%, 0%, 0.4);
+
+            --space-xs: 0.5rem;
+            --space-sm: 0.75rem;
+            --space-md: 1rem;
+            --space-lg: 1.5rem;
+            --space-xl: 2.5rem;
+            
+            --navbar-height: 72px;
+            --radius-md: 12px;
+            --radius-lg: 16px;
+            --radius-full: 9999px;
+            
+            --transition-normal: 300ms;
+        }
+
+        body.light-theme {
+            --bg-body: hsl(230, 30%, 96%);
+            --bg-surface: hsla(230, 30%, 100%, 0.95);
+            --bg-surface-hover: hsla(230, 30%, 95%, 0.98);
+            --bg-navbar: hsla(230, 30%, 100%, 0.98);
+            --bg-dropdown: hsla(230, 30%, 100%, 0.98);
+            --text-main: hsl(230, 40%, 10%);
+            --text-muted: hsl(230, 20%, 40%);
+            --border-color: hsla(230, 20%, 80%, 0.2);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding-top: var(--navbar-height);
+        }
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            right: 0;
+            left: 0;
+            height: var(--navbar-height);
+            background: var(--bg-navbar);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            box-shadow: var(--shadow-nav);
+            z-index: 1000;
+            padding: 0 var(--space-lg);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .navbar-brand {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 44px;
+            height: 44px;
+            background: var(--gradient-primary);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.3rem;
+        }
+
+        .logo-text h1 {
+            font-size: 1.4rem;
+            font-weight: 900;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            line-height: 1;
+        }
+
+        .nav-menu {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            list-style: none;
+        }
+
+        .nav-item {
+            position: relative;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
+            padding: var(--space-sm) var(--space-md);
+            text-decoration: none;
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 0.9rem;
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+        }
+
+        .nav-link:hover {
+            background: var(--bg-surface);
+            color: var(--text-main);
+        }
+
+        .dropdown-wrapper {
+            position: relative;
+        }
+
+        .dropdown-menu-large {
+            position: absolute;
+            top: calc(100% + 5px);
+            right: 0;
+            background: var(--bg-dropdown);
+            backdrop-filter: blur(20px);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            box-shadow: var(--shadow-lg);
+            width: 350px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all var(--transition-normal);
+            z-index: 1001;
+            overflow: hidden;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .dropdown-wrapper:hover .dropdown-menu-large {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .dropdown-section {
+            padding: var(--space-md);
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dropdown-section-title {
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--primary-solid);
+            margin-bottom: var(--space-sm);
+            padding-bottom: var(--space-xs);
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .dropdown-item-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--space-xs);
+        }
+
+        .dropdown-item {
+            display: flex;
+            align-items: center;
+            gap: var(--space-sm);
+            padding: 8px 12px;
+            color: var(--text-main);
+            border-radius: var(--radius-md);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .dropdown-item:hover {
+            background: var(--bg-surface-hover);
+        }
+
+        .nav-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 10px 18px;
+            border-radius: var(--radius-full);
+            font-size: 0.85rem;
+            font-weight: 700;
+            border: none;
+            cursor: pointer;
+            transition: all var(--transition-normal);
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .theme-toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-full);
+            border: 1px solid var(--border-color);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            padding: 2px;
+        }
+
+        .theme-toggle-handle {
+            width: 18px;
+            height: 18px;
+            background: var(--primary-solid);
+            border-radius: 50%;
+            transition: transform var(--transition-normal);
+        }
+
+        body.light-theme .theme-toggle-handle {
+            transform: translateX(-20px);
+            background: var(--accent-solid);
+        }
+
+        .main-content {
+            padding: var(--space-xl) var(--space-lg);
+            max-width: 1400px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .player-container {
+            background: #000;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            aspect-ratio: 16/9;
+            margin-bottom: var(--space-xl);
+        }
+
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: var(--space-lg);
+            margin-top: var(--space-xl);
+        }
+
+        .channel-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg);
+            padding: var(--space-lg);
+            transition: all var(--transition-normal);
+            cursor: pointer;
+            text-align: center;
+        }
+
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary-solid);
+        }
+
+        .channel-logo {
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: var(--space-md);
+            background: var(--bg-surface-hover);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 2px solid var(--border-color);
+            border-radius: 50%;
+            border-top-color: var(--primary-solid);
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        .notification {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            right: 20px;
+            background: var(--primary-solid);
+            color: white;
+            padding: var(--space-md);
+            border-radius: var(--radius-md);
+            box-shadow: var(--shadow-lg);
+            z-index: 2000;
+            text-align: center;
+            font-weight: 600;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateY(-100px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 60px;
+            }
+            
+            .navbar {
+                height: 60px;
+                padding: 0 var(--space-md);
+            }
+            
+            .nav-menu {
+                display: none;
+            }
+            
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+        }
+    </style>
+</head>
+<body>
+
+<header class="navbar">
+    <a href="#" class="navbar-brand">
+        <div class="logo-icon">
+            <i class="fas fa-satellite-dish"></i>
+        </div>
+        <div class="logo-text">
+            <h1>PRO LIVE TV</h1>
+        </div>
+    </a>
+
+    <nav class="nav-menu">
+        <li class="nav-item">
+            <a href="#" class="nav-link active" onclick="loadFeaturedChannels()">
+                <i class="fas fa-home"></i>
+                <span>الرئيسية</span>
+            </a>
+        </li>
+        
+        <li class="nav-item dropdown-wrapper">
+            <a class="nav-link">
+                <i class="fas fa-globe-americas"></i>
+                <span>الدول</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="dropdown-menu-large" id="countriesDropdown">
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">
+                        <i class="fas fa-flag"></i>
+                        الدول العربية
+                    </div>
+                    <div class="dropdown-item-list" id="arabCountriesList">
+                        <!-- سيتم تحميل الدول العربية من API -->
+                    </div>
+                </div>
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">
+                        <i class="fas fa-globe"></i>
+                        دول العالم
+                    </div>
+                    <div class="dropdown-item-list" id="worldCountriesList">
+                        <!-- سيتم تحميل دول العالم من API -->
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+        <li class="nav-item dropdown-wrapper">
+            <a class="nav-link">
+                <i class="fas fa-language"></i>
+                <span>اللغات</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="dropdown-menu-large" id="languagesDropdown">
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">
+                        <i class="fas fa-volume-up"></i>
+                        اللغات الرئيسية
+                    </div>
+                    <div class="dropdown-item-list" id="mainLanguagesList">
+                        <!-- سيتم تحميل اللغات من API -->
+                    </div>
+                </div>
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">
+                        <i class="fas fa-globe-africa"></i>
+                        جميع اللغات
+                    </div>
+                    <div class="dropdown-item-list" id="allLanguagesList">
+                        <!-- سيتم تحميل جميع اللغات من API -->
+                    </div>
+                </div>
+            </div>
+        </li>
+        
+        <li class="nav-item dropdown-wrapper">
+            <a class="nav-link">
+                <i class="fas fa-th-large"></i>
+                <span>الفئات</span>
+                <i class="fas fa-chevron-down"></i>
+            </a>
+            <div class="dropdown-menu-large" id="categoriesDropdown">
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">
+                        <i class="fas fa-futbol"></i>
+                        الفئات الشائعة
+                    </div>
+                    <div class="dropdown-item-list" id="commonCategoriesList">
+                        <!-- سيتم تحميل الفئات الشائعة من API -->
+                    </div>
+                </div>
+                <div class="dropdown-section">
+                    <div class="dropdown-section-title">
+                        <i class="fas fa-tags"></i>
+                        جميع الفئات
+                    </div>
+                    <div class="dropdown-item-list" id="allCategoriesList">
+                        <!-- سيتم تحميل جميع الفئات من API -->
+                    </div>
+                </div>
+            </div>
+        </li>
+    </nav>
+
+    <div class="nav-actions">
+        <div class="theme-toggle" onclick="toggleTheme()">
+            <div class="theme-toggle-handle"></div>
+        </div>
+    </div>
+</header>
+
+<main class="main-content">
+    <div class="player-container">
+        <video id="videoPlayer" playsinline controls crossorigin="anonymous"></video>
+    </div>
+
+    <div id="channelsDisplay">
+        <div style="text-align: center; padding: var(--space-xl);">
+            <h2 style="margin-bottom: var(--space-md);">مرحباً بك في PRO LIVE TV</h2>
+            <p style="color: var(--text-muted); margin-bottom: var(--space-lg);">
+                اختر من القائمة أعلاه لتصفح القنوات حسب الدولة أو اللغة أو الفئة
+            </p>
+            <button class="nav-btn" onclick="loadFeaturedChannels()">
+                <i class="fas fa-play"></i>
+                <span>عرض القنوات المميزة</span>
+            </button>
+        </div>
+    </div>
+</main>
+
+<script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+<script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+<script>
+    // --- جميع روابط API الخاصة بـ GitHub iptv ---
+    const IPTV_API = {
+        // الروابط الأساسية
+        BASE: 'https://iptv-org.github.io',
+        INDEX: 'https://iptv-org.github.io/iptv/index.m3u',
+        INDEX_NSFW: 'https://iptv-org.github.io/iptv/index.nsfw.m3u',
+        
+        // الدول
+        COUNTRIES: {
+            LIST: 'https://iptv-org.github.io/api/countries.json',
+            SAUDI_ARABIA: 'https://iptv-org.github.io/iptv/countries/sa.m3u',
+            EGYPT: 'https://iptv-org.github.io/iptv/countries/eg.m3u',
+            UAE: 'https://iptv-org.github.io/iptv/countries/ae.m3u',
+            QATAR: 'https://iptv-org.github.io/iptv/countries/qa.m3u',
+            KUWAIT: 'https://iptv-org.github.io/iptv/countries/kw.m3u',
+            BAHRAIN: 'https://iptv-org.github.io/iptv/countries/bh.m3u',
+            OMAN: 'https://iptv-org.github.io/iptv/countries/om.m3u',
+            JORDAN: 'https://iptv-org.github.io/iptv/countries/jo.m3u',
+            LEBANON: 'https://iptv-org.github.io/iptv/countries/lb.m3u',
+            SYRIA: 'https://iptv-org.github.io/iptv/countries/sy.m3u',
+            IRAQ: 'https://iptv-org.github.io/iptv/countries/iq.m3u',
+            YEMEN: 'https://iptv-org.github.io/iptv/countries/ye.m3u',
+            MOROCCO: 'https://iptv-org.github.io/iptv/countries/ma.m3u',
+            ALGERIA: 'https://iptv-org.github.io/iptv/countries/dz.m3u',
+            TUNISIA: 'https://iptv-org.github.io/iptv/countries/tn.m3u',
+            SUDAN: 'https://iptv-org.github.io/iptv/countries/sd.m3u',
+            LIBYA: 'https://iptv-org.github.io/iptv/countries/ly.m3u',
+            USA: 'https://iptv-org.github.io/iptv/countries/us.m3u',
+            UK: 'https://iptv-org.github.io/iptv/countries/gb.m3u',
+            FRANCE: 'https://iptv-org.github.io/iptv/countries/fr.m3u',
+            GERMANY: 'https://iptv-org.github.io/iptv/countries/de.m3u',
+            ITALY: 'https://iptv-org.github.io/iptv/countries/it.m3u',
+            SPAIN: 'https://iptv-org.github.io/iptv/countries/es.m3u',
+            TURKEY: 'https://iptv-org.github.io/iptv/countries/tr.m3u',
+            RUSSIA: 'https://iptv-org.github.io/iptv/countries/ru.m3u',
+            CHINA: 'https://iptv-org.github.io/iptv/countries/cn.m3u',
+            JAPAN: 'https://iptv-org.github.io/iptv/countries/jp.m3u',
+            INDIA: 'https://iptv-org.github.io/iptv/countries/in.m3u',
+            PAKISTAN: 'https://iptv-org.github.io/iptv/countries/pk.m3u',
+            IRAN: 'https://iptv-org.github.io/iptv/countries/ir.m3u',
+            CANADA: 'https://iptv-org.github.io/iptv/countries/ca.m3u',
+            AUSTRALIA: 'https://iptv-org.github.io/iptv/countries/au.m3u',
+            BRAZIL: 'https://iptv-org.github.io/iptv/countries/br.m3u',
+            MEXICO: 'https://iptv-org.github.io/iptv/countries/mx.m3u'
+        },
+        
+        // اللغات
+        LANGUAGES: {
+            LIST: 'https://iptv-org.github.io/api/languages.json',
+            ARABIC: 'https://iptv-org.github.io/iptv/languages/ara.m3u',
+            ENGLISH: 'https://iptv-org.github.io/iptv/languages/eng.m3u',
+            FRENCH: 'https://iptv-org.github.io/iptv/languages/fre.m3u',
+            SPANISH: 'https://iptv-org.github.io/iptv/languages/spa.m3u',
+            GERMAN: 'https://iptv-org.github.io/iptv/languages/ger.m3u',
+            ITALIAN: 'https://iptv-org.github.io/iptv/languages/ita.m3u',
+            PORTUGUESE: 'https://iptv-org.github.io/iptv/languages/por.m3u',
+            RUSSIAN: 'https://iptv-org.github.io/iptv/languages/rus.m3u',
+            TURKISH: 'https://iptv-org.github.io/iptv/languages/tur.m3u',
+            PERSIAN: 'https://iptv-org.github.io/iptv/languages/per.m3u',
+            HINDI: 'https://iptv-org.github.io/iptv/languages/hin.m3u',
+            CHINESE: 'https://iptv-org.github.io/iptv/languages/zho.m3u',
+            JAPANESE: 'https://iptv-org.github.io/iptv/languages/jpn.m3u',
+            KOREAN: 'https://iptv-org.github.io/iptv/languages/kor.m3u',
+            HEBREW: 'https://iptv-org.github.io/iptv/languages/heb.m3u',
+            GREEK: 'https://iptv-org.github.io/iptv/languages/gre.m3u',
+            DUTCH: 'https://iptv-org.github.io/iptv/languages/dut.m3u',
+            SWEDISH: 'https://iptv-org.github.io/iptv/languages/swe.m3u',
+            POLISH: 'https://iptv-org.github.io/iptv/languages/pol.m3u'
+        },
+        
+        // الفئات
+        CATEGORIES: {
+            LIST: 'https://iptv-org.github.io/api/categories.json',
+            SPORTS: 'https://iptv-org.github.io/iptv/categories/sports.m3u',
+            NEWS: 'https://iptv-org.github.io/iptv/categories/news.m3u',
+            ENTERTAINMENT: 'https://iptv-org.github.io/iptv/categories/entertainment.m3u',
+            MOVIES: 'https://iptv-org.github.io/iptv/categories/movies.m3u',
+            SERIES: 'https://iptv-org.github.io/iptv/categories/series.m3u',
+            KIDS: 'https://iptv-org.github.io/iptv/categories/kids.m3u',
+            MUSIC: 'https://iptv-org.github.io/iptv/categories/music.m3u',
+            DOCUMENTARY: 'https://iptv-org.github.io/iptv/categories/documentary.m3u',
+            EDUCATIONAL: 'https://iptv-org.github.io/iptv/categories/educational.m3u',
+            RELIGIOUS: 'https://iptv-org.github.io/iptv/categories/religious.m3u',
+            SHOPPING: 'https://iptv-org.github.io/iptv/categories/shopping.m3u',
+            REGIONAL: 'https://iptv-org.github.io/iptv/categories/regional.m3u',
+            BUSINESS: 'https://iptv-org.github.io/iptv/categories/business.m3u',
+            ANIMATION: 'https://iptv-org.github.io/iptv/categories/animation.m3u',
+            ADULT: 'https://iptv-org.github.io/iptv/categories/adult.m3u',
+            GAMING: 'https://iptv-org.github.io/iptv/categories/gaming.m3u'
+        },
+        
+        // القنوات (JSON API)
+        CHANNELS: {
+            LIST: 'https://iptv-org.github.io/api/channels.json',
+            STREAMS: 'https://iptv-org.github.io/api/streams.json',
+            GUIDE: 'https://iptv-org.github.io/api/guide.json'
+        },
+        
+        // روابط خاصة
+        SPECIAL: {
+            FAVORITES: 'https://iptv-org.github.io/iptv/playlists/favorites.m3u',
+            TOP_100: 'https://iptv-org.github.io/iptv/playlists/top100.m3u',
+            TOP_1000: 'https://iptv-org.github.io/iptv/playlists/top1000.m3u'
+        }
+    };
+
+    // متغيرات التطبيق
+    let currentChannels = [];
+    let player = null;
+    let countriesData = [];
+    let languagesData = [];
+    let categoriesData = [];
+
+    // --- التهيئة ---
+    document.addEventListener('DOMContentLoaded', async () => {
+        initTheme();
+        initPlayer();
+        
+        // تحميل البيانات الأساسية
+        await Promise.all([
+            loadCountriesData(),
+            loadLanguagesData(),
+            loadCategoriesData()
+        ]);
+        
+        // عرض البيانات في القوائم
+        renderCountriesList();
+        renderLanguagesList();
+        renderCategoriesList();
+        
+        // تحميل القنوات المميزة
+        await loadFeaturedChannels();
+    });
+
+    // --- إدارة الثيم ---
+    function initTheme() {
+        const saved = localStorage.getItem('theme');
+        if (saved === 'light') {
+            document.body.classList.add('light-theme');
+        }
+    }
+
+    function toggleTheme() {
+        document.body.classList.toggle('light-theme');
+        const isLight = document.body.classList.contains('light-theme');
+        localStorage.setItem('theme', isLight ? 'light' : 'dark');
+        showNotification(isLight ? 'تم تفعيل الوضع النهاري' : 'تم تفعيل الوضع الليلي');
+    }
+
+    // --- المشغل ---
+    function initPlayer() {
+        const video = document.getElementById('videoPlayer');
+        player = new Plyr(video, {
+            controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+            ratio: '16:9'
+        });
+    }
+
+    function playChannel(url) {
+        const videoPlayer = document.getElementById('videoPlayer');
+        
+        if (Hls.isSupported()) {
+            const hls = new Hls();
+            hls.loadSource(url);
+            hls.attachMedia(videoPlayer);
+            hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                videoPlayer.play();
+                showNotification('جاري تشغيل القناة...');
+            });
+            hls.on(Hls.Events.ERROR, (event, data) => {
+                if (data.fatal) {
+                    showNotification('خطأ في تشغيل القناة', 'error');
+                }
+            });
+        } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+            videoPlayer.src = url;
+            videoPlayer.play();
+            showNotification('جاري تشغيل القناة...');
+        } else {
+            showNotification('المتصفح لا يدعم هذا النوع من البث', 'error');
+        }
+    }
+
+    // --- تحميل البيانات من API ---
+    async function loadCountriesData() {
+        try {
+            const response = await fetch(IPTV_API.COUNTRIES.LIST);
+            countriesData = await response.json();
+        } catch (error) {
+            console.error('Error loading countries:', error);
+            // استخدام بيانات افتراضية
+            countriesData = getDefaultCountries();
+        }
+    }
+
+    async function loadLanguagesData() {
+        try {
+            const response = await fetch(IPTV_API.LANGUAGES.LIST);
+            languagesData = await response.json();
+        } catch (error) {
+            console.error('Error loading languages:', error);
+            // استخدام بيانات افتراضية
+            languagesData = getDefaultLanguages();
+        }
+    }
+
+    async function loadCategoriesData() {
+        try {
+            const response = await fetch(IPTV_API.CATEGORIES.LIST);
+            categoriesData = await response.json();
+        } catch (error) {
+            console.error('Error loading categories:', error);
+            // استخدام بيانات افتراضية
+            categoriesData = getDefaultCategories();
+        }
+    }
+
+    // --- عرض القوائم ---
+    function renderCountriesList() {
+        const arabCountriesList = document.getElementById('arabCountriesList');
+        const worldCountriesList = document.getElementById('worldCountriesList');
+        
+        // تصفية الدول العربية
+        const arabicCountries = countriesData.filter(country => 
+            ['SA', 'EG', 'AE', 'QA', 'KW', 'BH', 'OM', 'JO', 'LB', 'SY', 'IQ', 'YE', 'MA', 'DZ', 'TN', 'SD', 'LY'].includes(country.code)
+        );
+        
+        // عرض الدول العربية
+        arabCountriesList.innerHTML = arabicCountries.slice(0, 10).map(country => `
+            <div class="dropdown-item" onclick="loadCountryChannels('${country.code}')">
+                <span>${getCountryName(country)}</span>
+            </div>
+        `).join('');
+        
+        // عرض دول العالم
+        worldCountriesList.innerHTML = countriesData.slice(0, 15).map(country => `
+            <div class="dropdown-item" onclick="loadCountryChannels('${country.code}')">
+                <span>${getCountryName(country)}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderLanguagesList() {
+        const mainLanguagesList = document.getElementById('mainLanguagesList');
+        const allLanguagesList = document.getElementById('allLanguagesList');
+        
+        // اللغات الرئيسية
+        const mainLanguages = ['ara', 'eng', 'fre', 'spa', 'ger', 'ita', 'rus'];
+        const mainLangs = languagesData.filter(lang => mainLanguages.includes(lang.code));
+        
+        mainLanguagesList.innerHTML = mainLangs.map(lang => `
+            <div class="dropdown-item" onclick="loadLanguageChannels('${lang.code}')">
+                <span>${getLanguageName(lang)}</span>
+            </div>
+        `).join('');
+        
+        // جميع اللغات
+        allLanguagesList.innerHTML = languagesData.slice(0, 15).map(lang => `
+            <div class="dropdown-item" onclick="loadLanguageChannels('${lang.code}')">
+                <span>${getLanguageName(lang)}</span>
+            </div>
+        `).join('');
+    }
+
+    function renderCategoriesList() {
+        const commonCategoriesList = document.getElementById('commonCategoriesList');
+        const allCategoriesList = document.getElementById('allCategoriesList');
+        
+        // الفئات الشائعة
+        const commonCategories = ['sports', 'news', 'entertainment', 'movies', 'music', 'kids'];
+        const commonCats = categoriesData.filter(cat => commonCategories.includes(cat.id));
+        
+        commonCategoriesList.innerHTML = commonCats.map(cat => `
+            <div class="dropdown-item" onclick="loadCategoryChannels('${cat.id}')">
+                <span>${getCategoryName(cat)}</span>
+            </div>
+        `).join('');
+        
+        // جميع الفئات
+        allCategoriesList.innerHTML = categoriesData.slice(0, 15).map(cat => `
+            <div class="dropdown-item" onclick="loadCategoryChannels('${cat.id}')">
+                <span>${getCategoryName(cat)}</span>
+            </div>
+        `).join('');
+    }
+
+    // --- تحميل القنوات ---
+    async function loadFeaturedChannels() {
+        showNotification('جاري تحميل القنوات المميزة...');
+        
+        try {
+            // استخدام التوب 100
+            const response = await fetch(IPTV_API.SPECIAL.TOP_100);
+            const m3uContent = await response.text();
+            currentChannels = parseM3U(m3uContent);
+            
+            displayChannels(currentChannels.slice(0, 50), 'القنوات المميزة 🔥');
+            showNotification(`تم تحميل ${currentChannels.length} قناة مميزة`);
+        } catch (error) {
+            console.error('Error loading featured channels:', error);
+            // محاولة استخدام الملف الرئيسي
+            await loadMainIndex();
+        }
+    }
+
+    async function loadCountryChannels(countryCode) {
+        const country = countriesData.find(c => c.code === countryCode);
+        showNotification(`جاري تحميل قنوات ${getCountryName(country)}...`);
+        
+        try {
+            const url = `${IPTV_API.BASE}/iptv/countries/${countryCode.toLowerCase()}.m3u`;
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const m3uContent = await response.text();
+                currentChannels = parseM3U(m3uContent);
+                displayChannels(currentChannels, `قنوات ${getCountryName(country)}`);
+                showNotification(`تم تحميل ${currentChannels.length} قناة`);
+            } else {
+                // البحث عن قنوات هذه الدولة في الملف الرئيسي
+                await searchChannelsByCountry(countryCode);
+            }
+        } catch (error) {
+            console.error('Error loading country channels:', error);
+            await searchChannelsByCountry(countryCode);
+        }
+    }
+
+    async function loadLanguageChannels(languageCode) {
+        const language = languagesData.find(l => l.code === languageCode);
+        showNotification(`جاري تحميل قنوات ${getLanguageName(language)}...`);
+        
+        try {
+            const url = `${IPTV_API.BASE}/iptv/languages/${languageCode}.m3u`;
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const m3uContent = await response.text();
+                currentChannels = parseM3U(m3uContent);
+                displayChannels(currentChannels, `قنوات ${getLanguageName(language)}`);
+                showNotification(`تم تحميل ${currentChannels.length} قناة`);
+            } else {
+                await searchChannelsByLanguage(languageCode);
+            }
+        } catch (error) {
+            console.error('Error loading language channels:', error);
+            await searchChannelsByLanguage(languageCode);
+        }
+    }
+
+    async function loadCategoryChannels(categoryId) {
+        const category = categoriesData.find(c => c.id === categoryId);
+        showNotification(`جاري تحميل قنوات ${getCategoryName(category)}...`);
+        
+        try {
+            const url = `${IPTV_API.BASE}/iptv/categories/${categoryId}.m3u`;
+            const response = await fetch(url);
+            
+            if (response.ok) {
+                const m3uContent = await response.text();
+                currentChannels = parseM3U(m3uContent);
+                displayChannels(currentChannels, `قنوات ${getCategoryName(category)}`);
+                showNotification(`تم تحميل ${currentChannels.length} قناة`);
+            } else {
+                await searchChannelsByCategory(categoryId);
+            }
+        } catch (error) {
+            console.error('Error loading category channels:', error);
+            await searchChannelsByCategory(categoryId);
+        }
+    }
+
+    async function loadMainIndex() {
+        try {
+            const response = await fetch(IPTV_API.INDEX);
+            const m3uContent = await response.text();
+            currentChannels = parseM3U(m3uContent);
+            displayChannels(currentChannels.slice(0, 100), 'جميع القنوات المتاحة 📺');
+            showNotification(`تم تحميل ${currentChannels.length} قناة`);
+        } catch (error) {
+            console.error('Error loading main index:', error);
+            showNotification('خطأ في تحميل القنوات', 'error');
+        }
+    }
+
+    // --- البحث في القنوات ---
+    async function searchChannelsByCountry(countryCode) {
+        try {
+            const response = await fetch(IPTV_API.CHANNELS.LIST);
+            const channels = await response.json();
+            
+            const filteredChannels = channels.filter(channel => 
+                channel.country === countryCode
+            ).slice(0, 50);
+            
+            if (filteredChannels.length > 0) {
+                currentChannels = filteredChannels.map(ch => ({
+                    name: ch.name,
+                    logo: ch.logo,
+                    url: getStreamUrl(ch.id)
+                }));
+                
+                const country = countriesData.find(c => c.code === countryCode);
+                displayChannels(currentChannels, `قنوات ${getCountryName(country)}`);
+                showNotification(`تم العثور على ${currentChannels.length} قناة`);
+            } else {
+                showNotification('لم يتم العثور على قنوات لهذه الدولة', 'error');
+            }
+        } catch (error) {
+            console.error('Error searching channels:', error);
+            showNotification('خطأ في البحث عن القنوات', 'error');
+        }
+    }
+
+    async function searchChannelsByLanguage(languageCode) {
+        try {
+            const response = await fetch(IPTV_API.CHANNELS.LIST);
+            const channels = await response.json();
+            
+            const filteredChannels = channels.filter(channel => 
+                channel.languages && channel.languages.includes(languageCode)
+            ).slice(0, 50);
+            
+            if (filteredChannels.length > 0) {
+                currentChannels = filteredChannels.map(ch => ({
+                    name: ch.name,
+                    logo: ch.logo,
+                    url: getStreamUrl(ch.id)
+                }));
+                
+                const language = languagesData.find(l => l.code === languageCode);
+                displayChannels(currentChannels, `قنوات ${getLanguageName(language)}`);
+                showNotification(`تم العثور على ${currentChannels.length} قناة`);
+            } else {
+                showNotification('لم يتم العثور على قنوات لهذه اللغة', 'error');
+            }
+        } catch (error) {
+            console.error('Error searching channels:', error);
+            showNotification('خطأ في البحث عن القنوات', 'error');
+        }
+    }
+
+    async function searchChannelsByCategory(categoryId) {
+        try {
+            const response = await fetch(IPTV_API.CHANNELS.LIST);
+            const channels = await response.json();
+            
+        const filteredChannels = channels.filter(channel => 
+                channel.categories && channel.categories.includes(categoryId)
+            ).slice(0, 50);
+            
+            if (filteredChannels.length > 0) {
+                currentChannels = filteredChannels.map(ch => ({
+                    name: ch.name,
+                    logo: ch.logo,
+                    url: getStreamUrl(ch.id)
+                }));
+                
+                const category = categoriesData.find(c => c.id === categoryId);
+                displayChannels(currentChannels, `قنوات ${getCategoryName(category)}`);
+                showNotification(`تم العثور على ${currentChannels.length} قناة`);
+            } else {
+                showNotification('لم يتم العثور على قنوات لهذه الفئة', 'error');
+            }
+        } catch (error) {
+            console.error('Error searching channels:', error);
+            showNotification('خطأ في البحث عن القنوات', 'error');
+        }
+    }
+
+    function getStreamUrl(channelId) {
+        return `https://iptv-org.github.io/streams/${channelId}.m3u8`;
+    }
+
+    // --- تحليل M3U ---
+    function parseM3U(content) {
+        const lines = content.split('\n');
+        const channels = [];
+        let currentChannel = {};
+
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i].trim();
+            
+            if (line.startsWith('#EXTINF:')) {
+                const info = line.substring(8);
+                const parts = info.split(',');
+                
+                if (parts.length >= 2) {
+                    const name = parts[parts.length - 1];
+                    const attrs = parts[0];
+                    
+                    currentChannel = {
+                        name: name.replace(/['"]/g, '').trim(),
+                        logo: extractAttribute(attrs, 'tvg-logo'),
+                        group: extractAttribute(attrs, 'group-title')
+                    };
+                }
+            } else if (line.startsWith('http')) {
+                currentChannel.url = line.trim();
+                if (currentChannel.name && currentChannel.url) {
+                    channels.push({...currentChannel});
+                }
+                currentChannel = {};
+            }
+        }
+
+        return channels;
+    }
+
+    function extractAttribute(text, attribute) {
+        const regex = new RegExp(`${attribute}="([^"]*)"`);
+        const match = text.match(regex);
+        return match ? match[1] : null;
+    }
+
+    // --- عرض القنوات ---
+    function displayChannels(channels, title) {
+        const container = document.getElementById('channelsDisplay');
+        
+        if (channels.length === 0) {
+            container.innerHTML = `
+                <div style="text-align: center; padding: var(--space-xl);">
+                    <i class="fas fa-tv" style="font-size: 3rem; color: var(--text-muted); margin-bottom: var(--space-md);"></i>
+                    <h3 style="margin-bottom: var(--space-sm);">لا توجد قنوات</h3>
+                    <p style="color: var(--text-muted);">لم يتم العثور على قنوات لعرضها</p>
+                </div>
+            `;
+            return;
+        }
+
+        container.innerHTML = `
+            <div style="margin-bottom: var(--space-lg);">
+                <h2 style="font-size: 1.5rem; margin-bottom: var(--space-sm);">${title}</h2>
+                <p style="color: var(--text-muted);">${channels.length} قناة متاحة</p>
+            </div>
+            <div class="channels-grid">
+                ${channels.map(channel => `
+                    <div class="channel-card" onclick="playChannel('${channel.url}')">
+                        <img src="${channel.logo || 'https://via.placeholder.com/64/1E1E2E/FFFFFF?text=TV'}" 
+                             class="channel-logo"
+                             onerror="this.src='https://via.placeholder.com/64/1E1E2E/FFFFFF?text=${channel.name.charAt(0)}'">
+                        <div style="font-weight: 700; margin-bottom: var(--space-xs);">${channel.name}</div>
+                        <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: var(--space-sm);">
+                            ${channel.group || 'عام'}
+                        </div>
+                        <button class="nav-btn" style="padding: 6px 12px; font-size: 0.8rem; width: 100%;">
+                            <i class="fas fa-play"></i>
+                            <span>تشغيل</span>
+                        </button>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+        
+        container.scrollIntoView({ behavior: 'smooth' });
+    }
+
+    // --- وظائف مساعدة ---
+    function getCountryName(country) {
+        return country?.name?.ar || country?.name?.en || country?.code || 'غير معروف';
+    }
+
+    function getLanguageName(language) {
+        return language?.name?.ar || language?.name?.en || language?.code || 'غير معروف';
+    }
+
+    function getCategoryName(category) {
+        return category?.name?.ar || category?.name?.en || category?.id || 'غير معروف';
+    }
+
+    function getDefaultCountries() {
+        return [
+            { code: 'SA', name: { ar: 'السعودية', en: 'Saudi Arabia' } },
+            { code: 'EG', name: { ar: 'مصر', en: 'Egypt' } },
+            { code: 'AE', name: { ar: 'الإمارات', en: 'UAE' } },
+            { code: 'QA', name: { ar: 'قطر', en: 'Qatar' } },
+            { code: 'KW', name: { ar: 'الكويت', en: 'Kuwait' } },
+            { code: 'US', name: { ar: 'الولايات المتحدة', en: 'USA' } },
+            { code: 'GB', name: { ar: 'بريطانيا', en: 'UK' } },
+            { code: 'FR', name: { ar: 'فرنسا', en: 'France' } },
+            { code: 'DE', name: { ar: 'ألمانيا', en: 'Germany' } }
+        ];
+    }
+
+    function getDefaultLanguages() {
+        return [
+            { code: 'ara', name: { ar: 'العربية', en: 'Arabic' } },
+            { code: 'eng', name: { ar: 'الإنجليزية', en: 'English' } },
+            { code: 'fre', name: { ar: 'الفرنسية', en: 'French' } },
+            { code: 'spa', name: { ar: 'الإسبانية', en: 'Spanish' } },
+            { code: 'ger', name: { ar: 'الألمانية', en: 'German' } }
+        ];
+    }
+
+    function getDefaultCategories() {
+        return [
+            { id: 'sports', name: { ar: 'الرياضة', en: 'Sports' } },
+            { id: 'news', name: { ar: 'الأخبار', en: 'News' } },
+            { id: 'movies', name: { ar: 'أفلام', en: 'Movies' } },
+            { id: 'music', name: { ar: 'موسيقى', en: 'Music' } },
+            { id: 'kids', name: { ar: 'أطفال', en: 'Kids' } }
+        ];
+    }
+
+    // --- الإشعارات ---
+    function showNotification(message, type = 'info') {
+        const notification = document.createElement('div');
+        notification.className = 'notification';
+        
+        if (type === 'error') {
+            notification.style.background = '#ff4444';
+        } else if (type === 'success') {
+            notification.style.background = '#00C851';
+        }
+        
+        notification.textContent = message;
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.style.animation = 'slideOut 0.3s ease-out';
+            setTimeout(() => notification.remove(), 300);
+        }, 3000);
+    }
+
+    // إضافة أنيميشن للإشعارات
+    const style = document.createElement('style');
+    style.textContent = `
+        @keyframes slideOut {
+            from { transform: translateY(0); opacity: 1; }
+            to { transform: translateY(-100px); opacity: 0; }
+        }
+    `;
+    document.head.appendChild(style);
+</script>
+</body>
+</html>
