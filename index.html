@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Imad El-Din Iptv Player</title>
+    
+    <link href="https://vjs.zencdn.net/7.20.3/video-js.css" rel="stylesheet" />
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #4b0082; --accent: #ff0055; --bg: #0a0a0a; --card: #161616;
+            --text: #ffffff; --input-bg: #222; --card-img-bg: #ffffff;
+        }
+        .light-mode {
+            --bg: #f0f2f5; --card: #ffffff; --text: #1a1a1a; --input-bg: #fff; --card-img-bg: #f9f9f9;
+        }
+
+        body { font-family: 'Tajawal', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; transition: 0.3s; }
+        
+        /* Header */
+        header { background: linear-gradient(135deg, #1a1a1a 0%, #0a0a0a 100%); padding: 30px 20px; text-align: center; border-bottom: 3px solid var(--primary); box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
+        .logo { font-size: 2.2rem; font-weight: bold; margin-bottom: 25px; }
+        .logo span { color: var(--accent); }
+
+        .controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; max-width: 1100px; margin: 0 auto; }
+        select, input, .upload-label { background: var(--input-bg); border: 1px solid #444; color: var(--text); padding: 12px 20px; border-radius: 50px; outline: none; cursor: pointer; font-family: 'Tajawal'; }
+        .upload-label { background: var(--accent); color: white; border: none; font-weight: bold; }
+        
+        .mode-btn { position: absolute; top: 20px; left: 20px; background: rgba(255,255,255,0.1); color: white; border: 1px solid #555; padding: 8px 15px; border-radius: 8px; cursor: pointer; z-index: 100; }
+
+        /* Player - Fixed Fullscreen */
+        .player-container { max-width: 900px; margin: 20px auto; background: #000; border-radius: 15px; overflow: hidden; border: 2px solid var(--primary); box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .status-bar { background: var(--primary); color: white; padding: 12px 20px; display: flex; justify-content: space-between; font-weight: bold; }
+        
+        /* Grid */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; padding: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--card); border-radius: 15px; padding: 15px; text-align: center; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 10px rgba(0,0,0,0.2); border: 1px solid transparent; }
+        .card:hover { transform: translateY(-8px); border-color: var(--primary); }
+        
+        .img-container { background: #fff; height: 90px; border-radius: 10px; display: flex; align-items: center; justify-content: center; margin-bottom: 12px; padding: 10px; overflow: hidden; }
+        .img-container img { max-width: 100%; max-height: 100%; object-fit: contain; }
+
+        footer { background: #0a0a0a; color: #888; text-align: center; padding: 40px; margin-top: 60px; border-top: 5px solid var(--primary); }
+        .copy-name { color: var(--accent); font-weight: bold; font-size: 1.1rem; }
+
+        /* Video.js Fullscreen Fix */
+        .video-js .vjs-control-bar { display: flex !important; }
+        .vjs-fullscreen-enabled .player-container { max-width: 100% !important; margin: 0 !important; border: none !important; }
+
+        #loader { text-align: center; padding: 20px; color: var(--accent); font-weight: bold; font-size: 1.2rem; }
+    </style>
+</head>
+<body>
+
+<button class="mode-btn" onclick="toggleTheme()">تغيير الوضع</button>
+
+<header>
+    <div class="logo"><br>📺<span>STREAMS</span></div>
+    <div class="controls">
+        <select id="countrySelect"><option value="">جاري تحميل الدول...</option></select>
+        <input type="text" id="searchInput" placeholder="بحث عن قناة...">
+        <label class="upload-label">رفع ملف M3U 📁 <input type="file" id="m3uInput" accept=".m3u,.m3u8" style="display:none;"></label>
+    </div>
+</header>
+
+<div class="player-container" id="p-container">
+    <div class="status-bar"><span id="video-title">اختر قناة لبدء البث</span><span id="live-tag">● مباشر</span></div>
+    <video id="my-video" class="video-js vjs-fluid vjs-big-play-centered" controls playsinline webkit-playsinline preload="auto" crossorigin="anonymous"></video>
+</div>
+
+<div id="loader" style="display:none;">جاري معالجة البيانات...</div>
+<div id="channelsGrid" class="grid"></div>
+
+<footer>
+    <p>جميع الحقوق محفوظة &copy; 2026</p>
+    <p class="copy-name">تصميم وبرمجة: عماد الدين لمراني</p>
+    <p style="font-size: 0.8rem; margin-top: 10px;">مشغل IPTV متطور يدعم ملفات M3U وقنوات GitHub</p>
+</footer>
+
+<script src="https://vjs.zencdn.net/7.20.3/video.min.js"></script>
+
+<script>
+    // تهيئة المشغل مع دعم كامل لتكبير الشاشة
+    const player = videojs('my-video', {
+        fill: true,
+        responsive: true,
+        controls: true,
+        controlBar: {
+            fullscreenToggle: true
+        }
+    });
+
+    const countrySelect = document.getElementById('countrySelect');
+    const channelsGrid = document.getElementById('channelsGrid');
+    const searchInput = document.getElementById('searchInput');
+    const loader = document.getElementById('loader');
+    const videoTitle = document.getElementById('video-title');
+    
+    let currentData = [];
+
+    function toggleTheme() { document.body.classList.toggle('light-mode'); }
+
+    // جلب الدول عند البداية
+    async function init() {
+        try {
+            const res = await fetch('https://iptv-org.github.io/api/countries.json');
+            const data = await res.json();
+            countrySelect.innerHTML = '<option value="">اختر دولة من العالم...</option>';
+            data.sort((a,b) => a.name.localeCompare(b.name)).forEach(c => {
+                const opt = document.createElement('option');
+                opt.value = c.code; opt.textContent = `${c.name} (${c.code})`;
+                countrySelect.appendChild(opt);
+            });
+        } catch (e) { console.error("API Error"); }
+    }
+
+    // جلب القنوات من GitHub
+    async function loadFromGitHub(code) {
+        if(!code) return;
+        loader.style.display = 'block';
+        channelsGrid.innerHTML = '';
+        try {
+            const [sRes, cRes] = await Promise.all([
+                fetch('https://iptv-org.github.io/api/streams.json'),
+                fetch('https://iptv-org.github.io/api/channels.json')
+            ]);
+            const streams = await sRes.json();
+            const channels = await cRes.json();
+            const countrySet = channels.filter(c => c.country === code.toUpperCase());
+            const countryIds = new Set(countrySet.map(c => c.id));
+
+            currentData = streams.filter(s => countryIds.has(s.channel)).map(s => {
+                const info = countrySet.find(c => c.id === s.channel);
+                return {
+                    name: info.name,
+                    url: s.url,
+                    logo: info.logo || `https://iptv-org.github.io/api/logos/channels/${info.id}.png`
+                };
+            });
+            render(currentData);
+        } catch (e) { alert("خطأ في جلب البيانات"); }
+        loader.style.display = 'none';
+    }
+
+    // عرض القنوات مع معالج الشعارات البديلة
+    function render(data) {
+        if(data.length === 0) { channelsGrid.innerHTML = "<p>لا توجد قنوات.</p>"; return; }
+        channelsGrid.innerHTML = data.map(ch => {
+            const smartLogo = `https://ui-avatars.com/api/?name=${encodeURIComponent(ch.name)}&background=4b0082&color=fff&size=200&bold=true`;
+            return `
+                <div class="card" onclick="playStream('${ch.url}', '${ch.name}')">
+                    <div class="img-container">
+                        <img src="${ch.logo}" onerror="this.onerror=null; this.src='${smartLogo}';">
+                    </div>
+                    <h4>${ch.name}</h4>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // وظيفة التشغيل
+    window.playStream = (url, name) => {
+        player.src({ src: url, type: 'application/x-mpegURL' });
+        player.play();
+        videoTitle.innerText = "تشغيل الآن: " + name;
+        window.scrollTo({ top: 180, behavior: 'smooth' });
+    };
+
+    // معالجة ملف M3U المرفوع
+    document.getElementById('m3uInput').addEventListener('change', function(e) {
+        const file = e.target.files[0];
+        const reader = new FileReader();
+        loader.style.display = 'block';
+        reader.onload = function(evt) {
+            const lines = evt.target.result.split('\n');
+            let parsed = [];
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes('#EXTINF:')) {
+                    const name = lines[i].split(',')[1] || "قناة مجهولة";
+                    const logoMatch = lines[i].match(/tvg-logo="(.*?)"/);
+                    const url = lines[i+1] ? lines[i+1].trim() : null;
+                    if (url && url.startsWith('http')) {
+                        parsed.push({ name: name.trim(), url, logo: logoMatch ? logoMatch[1] : '' });
+                    }
+                }
+            }
+            currentData = parsed; 
+            render(currentData);
+            videoTitle.innerText = `تم استيراد ${currentData.length} قناة`;
+            loader.style.display = 'none';
+        };
+        reader.readAsText(file);
+    });
+
+    // البحث
+    searchInput.addEventListener('input', e => {
+        const term = e.target.value.toLowerCase();
+        render(currentData.filter(c => c.name.toLowerCase().includes(term)));
+    });
+
+    countrySelect.addEventListener('change', e => loadFromGitHub(e.target.value));
+    
+    init();
+</script>
+</body>
+</html>
