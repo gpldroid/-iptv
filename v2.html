@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PRO LIVE TV | القنوات الحية المباشرة</title>
+    
+    <link rel="stylesheet" href="https://cdn.plyr.io/3.7.8/plyr.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #ff3366;
+            --secondary: #00d2ff;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --gray: #64748b;
+        }
+        
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        .navbar {
+            background: rgba(15, 23, 42, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid var(--primary);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        
+        .logo i {
+            color: var(--primary);
+            font-size: 2rem;
+        }
+        
+        .logo h1 {
+            font-size: 1.5rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .nav-menu {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+        
+        .nav-item {
+            position: relative;
+        }
+        
+        .nav-link {
+            color: var(--light);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            cursor: pointer;
+        }
+        
+        .nav-link:hover {
+            background: rgba(255, 51, 102, 0.1);
+            color: var(--primary);
+        }
+        
+        .dropdown {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background: rgba(15, 23, 42, 0.98);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 51, 102, 0.3);
+            border-radius: 12px;
+            padding: 1rem;
+            min-width: 300px;
+            display: none;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        
+        .nav-item:hover .dropdown {
+            display: grid;
+        }
+        
+        .dropdown-section h3 {
+            color: var(--secondary);
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            border-bottom: 1px solid rgba(0, 210, 255, 0.3);
+            padding-bottom: 0.25rem;
+        }
+        
+        .dropdown-item {
+            padding: 0.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-size: 0.9rem;
+        }
+        
+        .dropdown-item:hover {
+            background: rgba(0, 210, 255, 0.1);
+            color: var(--secondary);
+        }
+        
+        .main-content {
+            padding: 2rem;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .player-container {
+            background: #000;
+            border-radius: 16px;
+            overflow: hidden;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+        }
+        
+        .player-container video {
+            width: 100%;
+            height: 500px;
+            object-fit: contain;
+        }
+        
+        .channels-container {
+            background: rgba(30, 41, 59, 0.5);
+            border-radius: 16px;
+            padding: 2rem;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .section-title {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 2rem;
+        }
+        
+        .section-title h2 {
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .channels-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 1.5rem;
+        }
+        
+        .channel-card {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 12px;
+            padding: 1.5rem;
+            text-align: center;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            cursor: pointer;
+        }
+        
+        .channel-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--primary);
+            box-shadow: 0 10px 20px rgba(255, 51, 102, 0.2);
+        }
+        
+        .channel-logo {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            margin-bottom: 1rem;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            padding: 3px;
+        }
+        
+        .channel-name {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            font-size: 0.95rem;
+        }
+        
+        .channel-info {
+            color: var(--gray);
+            font-size: 0.8rem;
+        }
+        
+        .play-btn {
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            cursor: pointer;
+            font-family: 'Cairo';
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.05);
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 3rem;
+            color: var(--gray);
+        }
+        
+        .loading i {
+            font-size: 2rem;
+            margin-bottom: 1rem;
+            color: var(--primary);
+            animation: spin 1s linear infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @media (max-width: 768px) {
+            .nav-menu {
+                display: none;
+            }
+            
+            .channels-grid {
+                grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            }
+            
+            .player-container video {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="logo">
+            <i class="fas fa-satellite-dish"></i>
+            <h1>PRO LIVE TV</h1>
+        </div>
+        
+        <ul class="nav-menu">
+            <li class="nav-item">
+                <a href="#" class="nav-link" onclick="loadAllChannels()">
+                    <i class="fas fa-home"></i>
+                    <span>الرئيسية</span>
+                </a>
+            </li>
+            
+            <!-- الدول -->
+            <li class="nav-item">
+                <div class="nav-link">
+                    <i class="fas fa-globe-asia"></i>
+                    <span>الدول</span>
+                </div>
+                <div class="dropdown" id="countriesDropdown">
+                    <!-- سيتم ملؤه بالدول -->
+                </div>
+            </li>
+            
+            <!-- اللغات -->
+            <li class="nav-item">
+                <div class="nav-link">
+                    <i class="fas fa-language"></i>
+                    <span>اللغات</span>
+                </div>
+                <div class="dropdown" id="languagesDropdown">
+                    <!-- سيتم ملؤه باللغات -->
+                </div>
+            </li>
+            
+            <!-- الفئات -->
+            <li class="nav-item">
+                <div class="nav-link">
+                    <i class="fas fa-tags"></i>
+                    <span>الفئات</span>
+                </div>
+                <div class="dropdown" id="categoriesDropdown">
+                    <!-- سيتم ملؤه بالفئات -->
+                </div>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Video Player -->
+        <div class="player-container">
+            <video id="videoPlayer" playsinline controls crossorigin="anonymous"></video>
+        </div>
+
+        <!-- Channels Display -->
+        <div class="channels-container">
+            <div class="section-title">
+                <h2><i class="fas fa-tv"></i> القنوات المتاحة</h2>
+                <div id="channelsCount">0 قناة</div>
+            </div>
+            
+            <div class="channels-grid" id="channelsGrid">
+                <!-- سيتم عرض القنوات هنا -->
+                <div class="loading">
+                    <i class="fas fa-circle-notch"></i>
+                    <p>جاري تحميل القنوات...</p>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@latest"></script>
+    <script src="https://cdn.plyr.io/3.7.8/plyr.polyfilled.js"></script>
+
+    <script>
+        // ========== CONFIGURATION ==========
+        // جميع الروابط مأخوذة مباشرة من PLAYLISTS.md
+        const PLAYLISTS = {
+            // الملف الرئيسي (جميع القنوات)
+            ALL: 'https://iptv-org.github.io/iptv/index.m3u',
+            
+            // الدول العربية من القائمة
+            COUNTRIES: {
+                SAUDI_ARABIA: 'https://iptv-org.github.io/iptv/countries/sa.m3u',
+                EGYPT: 'https://iptv-org.github.io/iptv/countries/eg.m3u',
+                UAE: 'https://iptv-org.github.io/iptv/countries/ae.m3u',
+                QATAR: 'https://iptv-org.github.io/iptv/countries/qa.m3u',
+                KUWAIT: 'https://iptv-org.github.io/iptv/countries/kw.m3u',
+                BAHRAIN: 'https://iptv-org.github.io/iptv/countries/bh.m3u',
+                OMAN: 'https://iptv-org.github.io/iptv/countries/om.m3u',
+                JORDAN: 'https://iptv-org.github.io/iptv/countries/jo.m3u',
+                LEBANON: 'https://iptv-org.github.io/iptv/countries/lb.m3u',
+                SYRIA: 'https://iptv-org.github.io/iptv/countries/sy.m3u',
+                IRAQ: 'https://iptv-org.github.io/iptv/countries/iq.m3u'
+            },
+            
+            // اللغات (مأخوذة مباشرة من الجدول)
+            LANGUAGES: {
+                ARABIC: 'https://iptv-org.github.io/iptv/languages/ara.m3u',
+                ENGLISH: 'https://iptv-org.github.io/iptv/languages/eng.m3u',
+                FRENCH: 'https://iptv-org.github.io/iptv/languages/fra.m3u',
+                SPANISH: 'https://iptv-org.github.io/iptv/languages/spa.m3u',
+                GERMAN: 'https://iptv-org.github.io/iptv/languages/deu.m3u',
+                TURKISH: 'https://iptv-org.github.io/iptv/languages/tur.m3u',
+                PERSIAN: 'https://iptv-org.github.io/iptv/languages/per.m3u',
+                HINDI: 'https://iptv-org.github.io/iptv/languages/hin.m3u'
+            },
+            
+            // الفئات (مأخوذة مباشرة من الجدول)
+            CATEGORIES: {
+                SPORTS: 'https://iptv-org.github.io/iptv/categories/sports.m3u',
+                NEWS: 'https://iptv-org.github.io/iptv/categories/news.m3u',
+                MOVIES: 'https://iptv-org.github.io/iptv/categories/movies.m3u',
+                MUSIC: 'https://iptv-org.github.io/iptv/categories/music.m3u',
+                KIDS: 'https://iptv-org.github.io/iptv/categories/kids.m3u',
+                DOCUMENTARY: 'https://iptv-org.github.io/iptv/categories/documentary.m3u',
+                ENTERTAINMENT: 'https://iptv-org.github.io/iptv/categories/entertainment.m3u',
+                EDUCATION: 'https://iptv-org.github.io/iptv/categories/education.m3u'
+            }
+        };
+
+        // ========== STATE MANAGEMENT ==========
+        let currentChannels = [];
+        let player = null;
+
+        // ========== INITIALIZATION ==========
+        document.addEventListener('DOMContentLoaded', async () => {
+            // تهيئة المشغل
+            initPlayer();
+            
+            // تعبئة القوائم المنسدلة
+            populateDropdowns();
+            
+            // تحميل القنوات تلقائياً عند فتح الصفحة
+            await loadAllChannels();
+        });
+
+        // ========== PLAYER FUNCTIONS ==========
+        function initPlayer() {
+            const video = document.getElementById('videoPlayer');
+            player = new Plyr(video, {
+                controls: ['play', 'progress', 'current-time', 'mute', 'volume', 'fullscreen'],
+                ratio: '16:9'
+            });
+        }
+
+        function playChannel(url) {
+            const videoPlayer = document.getElementById('videoPlayer');
+            
+            if (Hls.isSupported()) {
+                const hls = new Hls();
+                hls.loadSource(url);
+                hls.attachMedia(videoPlayer);
+                hls.on(Hls.Events.MANIFEST_PARSED, () => {
+                    videoPlayer.play();
+                    showNotification('جاري تشغيل القناة...');
+                });
+            } else if (videoPlayer.canPlayType('application/vnd.apple.mpegurl')) {
+                videoPlayer.src = url;
+                videoPlayer.play();
+                showNotification('جاري تشغيل القناة...');
+            }
+        }
+
+        // ========== DROPDOWN POPULATION ==========
+        function populateDropdowns() {
+            // تعبئة قائمة الدول
+            const countriesDropdown = document.getElementById('countriesDropdown');
+            countriesDropdown.innerHTML = `
+                <div class="dropdown-section">
+                    <h3>الدول العربية</h3>
+                    <div class="dropdown-item" onclick="loadCountry('SAUDI_ARABIA')">السعودية</div>
+                    <div class="dropdown-item" onclick="loadCountry('EGYPT')">مصر</div>
+                    <div class="dropdown-item" onclick="loadCountry('UAE')">الإمارات</div>
+                    <div class="dropdown-item" onclick="loadCountry('QATAR')">قطر</div>
+                    <div class="dropdown-item" onclick="loadCountry('KUWAIT')">الكويت</div>
+                </div>
+                <div class="dropdown-section">
+                    <h3>دول أخرى</h3>
+                    <div class="dropdown-item" onclick="loadCountry('BAHRAIN')">البحرين</div>
+                    <div class="dropdown-item" onclick="loadCountry('OMAN')">عمان</div>
+                    <div class="dropdown-item" onclick="loadCountry('JORDAN')">الأردن</div>
+                    <div class="dropdown-item" onclick="loadCountry('LEBANON')">لبنان</div>
+                </div>
+            `;
+
+            // تعبئة قائمة اللغات
+            const languagesDropdown = document.getElementById('languagesDropdown');
+            languagesDropdown.innerHTML = `
+                <div class="dropdown-section">
+                    <h3>اللغات الرئيسية</h3>
+                    <div class="dropdown-item" onclick="loadLanguage('ARABIC')">العربية</div>
+                    <div class="dropdown-item" onclick="loadLanguage('ENGLISH')">الإنجليزية</div>
+                    <div class="dropdown-item" onclick="loadLanguage('FRENCH')">الفرنسية</div>
+                    <div class="dropdown-item" onclick="loadLanguage('SPANISH')">الإسبانية</div>
+                </div>
+                <div class="dropdown-section">
+                    <h3>لغات أخرى</h3>
+                    <div class="dropdown-item" onclick="loadLanguage('GERMAN')">الألمانية</div>
+                    <div class="dropdown-item" onclick="loadLanguage('TURKISH')">التركية</div>
+                    <div class="dropdown-item" onclick="loadLanguage('PERSIAN')">الفارسية</div>
+                    <div class="dropdown-item" onclick="loadLanguage('HINDI')">الهندية</div>
+                </div>
+            `;
+
+            // تعبئة قائمة الفئات
+            const categoriesDropdown = document.getElementById('categoriesDropdown');
+            categoriesDropdown.innerHTML = `
+                <div class="dropdown-section">
+                    <h3>الفئات الشائعة</h3>
+                    <div class="dropdown-item" onclick="loadCategory('SPORTS')">الرياضة</div>
+                    <div class="dropdown-item" onclick="loadCategory('NEWS')">الأخبار</div>
+                    <div class="dropdown-item" onclick="loadCategory('MOVIES')">أفلام</div>
+                    <div class="dropdown-item" onclick="loadCategory('MUSIC')">موسيقى</div>
+                </div>
+                <div class="dropdown-section">
+                    <h3>فئات أخرى</h3>
+                    <div class="dropdown-item" onclick="loadCategory('KIDS')">أطفال</div>
+                    <div class="dropdown-item" onclick="loadCategory('DOCUMENTARY')">وثائقي</div>
+                    <div class="dropdown-item" onclick="loadCategory('ENTERTAINMENT')">ترفيه</div>
+                    <div class="dropdown-item" onclick="loadCategory('EDUCATION')">تعليمي</div>
+                </div>
+            `;
+        }
+
+        // ========== CHANNEL LOADING FUNCTIONS ==========
+        async function loadAllChannels() {
+            showLoading('جاري تحميل جميع القنوات...');
+            
+            try {
+                const response = await fetch(PLAYLISTS.ALL);
+                const m3uContent = await response.text();
+                
+                if (m3uContent.includes('#EXTM3U')) {
+                    currentChannels = parseM3U(m3uContent);
+                    // عرض أول 100 قناة فقط للأداء
+                    displayChannels(currentChannels.slice(0, 100), 'جميع القنوات المتاحة');
+                    showNotification(`تم تحميل ${currentChannels.length} قناة`);
+                } else {
+                    throw new Error('تنسيق ملف غير صحيح');
+                }
+            } catch (error) {
+                console.error('Error loading channels:', error);
+                showNotification('خطأ في تحميل القنوات. جاري استخدام بيانات تجريبية...', 'error');
+                loadSampleChannels();
+            }
+        }
+
+        async function loadCountry(countryKey) {
+            const countryNames = {
+                'SAUDI_ARABIA': 'السعودية',
+                'EGYPT': 'مصر',
+                'UAE': 'الإمارات',
+                'QATAR': 'قطر',
+                'KUWAIT': 'الكويت',
+                'BAHRAIN': 'البحرين',
+                'OMAN': 'عمان',
+                'JORDAN': 'الأردن',
+                'LEBANON': 'لبنان'
+            };
+            
+            showLoading(`جاري تحميل قنوات ${countryNames[countryKey]}...`);
+            
+            try {
+                const url = PLAYLISTS.COUNTRIES[countryKey];
+                const response = await fetch(url);
+                const m3uContent = await response.text();
+                
+                if (m3uContent.includes('#EXTM3U')) {
+                    currentChannels = parseM3U(m3uContent);
+                    displayChannels(currentChannels, `قنوات ${countryNames[countryKey]}`);
+                    showNotification(`تم تحميل ${currentChannels.length} قناة`);
+                }
+            } catch (error) {
+                console.error('Error loading country channels:', error);
+                showNotification('خطأ في تحميل قنوات هذه الدولة', 'error');
+            }
+        }
+
+        async function loadLanguage(languageKey) {
+            const languageNames = {
+                'ARABIC': 'العربية',
+                'ENGLISH': 'الإنجليزية',
+                'FRENCH': 'الفرنسية',
+                'SPANISH': 'الإسبانية',
+                'GERMAN': 'الألمانية',
+                'TURKISH': 'التركية',
+                'PERSIAN': 'الفارسية',
+                'HINDI': 'الهندية'
+            };
+            
+            showLoading(`جاري تحميل قنوات ${languageNames[languageKey]}...`);
+            
+            try {
+                const url = PLAYLISTS.LANGUAGES[languageKey];
+                const response = await fetch(url);
+                const m3uContent = await response.text();
+                
+                if (m3uContent.includes('#EXTM3U')) {
+                    currentChannels = parseM3U(m3uContent);
+                    displayChannels(currentChannels, `قنوات ${languageNames[languageKey]}`);
+                    showNotification(`تم تحميل ${currentChannels.length} قناة`);
+                }
+            } catch (error) {
+                console.error('Error loading language channels:', error);
+                showNotification('خطأ في تحميل قنوات هذه اللغة', 'error');
+            }
+        }
+
+        async function loadCategory(categoryKey) {
+            const categoryNames = {
+                'SPORTS': 'الرياضة',
+                'NEWS': 'الأخبار',
+                'MOVIES': 'أفلام',
+                'MUSIC': 'موسيقى',
+                'KIDS': 'أطفال',
+                'DOCUMENTARY': 'وثائقي',
+                'ENTERTAINMENT': 'ترفيه',
+                'EDUCATION': 'تعليمي'
+            };
+            
+            showLoading(`جاري تحميل قنوات ${categoryNames[categoryKey]}...`);
+            
+            try {
+                const url = PLAYLISTS.CATEGORIES[categoryKey];
+                const response = await fetch(url);
+                const m3uContent = await response.text();
+                
+                if (m3uContent.includes('#EXTM3U')) {
+                    currentChannels = parseM3U(m3uContent);
+                    displayChannels(currentChannels, `قنوات ${categoryNames[categoryKey]}`);
+                    showNotification(`تم تحميل ${currentChannels.length} قناة`);
+                }
+            } catch (error) {
+                console.error('Error loading category channels:', error);
+                showNotification('خطأ في تحميل قنوات هذه الفئة', 'error');
+            }
+        }
+
+        // ========== M3U PARSING ==========
+        function parseM3U(content) {
+            const lines = content.split('\n');
+            const channels = [];
+            let currentChannel = {};
+
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                if (line.startsWith('#EXTINF:')) {
+                    // استخراج معلومات القناة
+                    const info = line.substring(8); // إزالة '#EXTINF:'
+                    const parts = info.split(',');
+                    
+                    if (parts.length >= 2) {
+                        const name = parts[parts.length - 1];
+                        const attrs = parts[0];
+                        
+                        currentChannel = {
+                            name: cleanChannelName(name),
+                            logo: extractAttribute(attrs, 'tvg-logo'),
+                            group: extractAttribute(attrs, 'group-title')
+                        };
+                    }
+                } else if (line.startsWith('http')) {
+                    // هذا هو رابط البث
+                    currentChannel.url = line;
+                    if (currentChannel.name && currentChannel.url) {
+                        channels.push({...currentChannel});
+                    }
+                    currentChannel = {};
+                }
+            }
+
+            return channels;
+        }
+
+        function cleanChannelName(name) {
+            // تنظيف اسم القناة من الرموز الغريبة
+            return name.replace(/['"]/g, '')
+                       .replace(/\|/g, ' - ')
+                       .trim()
+                       .substring(0, 50); // تقليل الطول
+        }
+
+        function extractAttribute(text, attribute) {
+            const regex = new RegExp(`${attribute}="([^"]*)"`);
+            const match = text.match(regex);
+            return match ? match[1] : null;
+        }
+
+        // ========== DISPLAY FUNCTIONS ==========
+        function displayChannels(channels, title) {
+            const grid = document.getElementById('channelsGrid');
+            const countElement = document.getElementById('channelsCount');
+            
+            countElement.textContent = `${channels.length} قناة`;
+            
+            if (channels.length === 0) {
+                grid.innerHTML = `
+                    <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                        <i class="fas fa-tv" style="font-size: 3rem; color: var(--gray); margin-bottom: 1rem;"></i>
+                        <h3>لا توجد قنوات</h3>
+                        <p>لم يتم العثور على قنوات في هذه القائمة</p>
+                    </div>
+                `;
+                return;
+            }
+
+            grid.innerHTML = channels.map((channel, index) => `
+                <div class="channel-card">
+                    <img src="${channel.logo || `https://ui-avatars.com/api/?name=${encodeURIComponent(channel.name)}&background=ff3366&color=fff`}" 
+                         class="channel-logo"
+                         onerror="this.src='https://ui-avatars.com/api/?name=${encodeURIComponent(channel.name.charAt(0))}&background=00d2ff&color=fff'">
+                    <div class="channel-name">${channel.name}</div>
+                    ${channel.group ? `<div class="channel-info">${channel.group}</div>` : ''}
+                    <button class="play-btn" onclick="playChannel('${channel.url}')">
+                        <i class="fas fa-play"></i> تشغيل
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        function loadSampleChannels() {
+            // بيانات تجريبية في حالة فشل التحميل
+            currentChannels = [
+                {
+                    name: 'قناة الرياضية',
+                    logo: 'https://logo.iptvcat.com/abc.png',
+                    group: 'رياضة',
+                    url: 'https://example.com/sport.m3u8'
+                },
+                {
+                    name: 'قناة الأخبار',
+                    logo: 'https://logo.iptvcat.com/news.png',
+                    group: 'أخبار',
+                    url: 'https://example.com/news.m3u8'
+                },
+                {
+                    name: 'قناة الأفلام',
+                    logo: 'https://logo.iptvcat.com/movies.png',
+                    group: 'أفلام',
+                    url: 'https://example.com/movies.m3u8'
+                }
+            ];
+            
+            displayChannels(currentChannels, 'قنوات تجريبية');
+            showNotification('تم تحميل قنوات تجريبية', 'info');
+        }
+
+        function showLoading(message) {
+            const grid = document.getElementById('channelsGrid');
+            grid.innerHTML = `
+                <div style="grid-column: 1/-1; text-align: center; padding: 3rem;">
+                    <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+                    <p style="margin-top: 1rem;">${message}</p>
+                </div>
+            `;
+        }
+
+        function showNotification(message, type = 'info') {
+            // إنشاء عنصر إشعار
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 20px;
+                right: 20px;
+                background: ${type === 'error' ? '#ff4444' : '#00C851'};
+                color: white;
+                padding: 1rem;
+                border-radius: 8px;
+                text-align: center;
+                font-weight: 600;
+                z-index: 2000;
+                animation: slideIn 0.3s ease-out;
+            `;
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(() => {
+                notification.style.animation = 'slideOut 0.3s ease-out';
+                setTimeout(() => notification.remove(), 300);
+            }, 3000);
+        }
+
+        // إضافة أنيميشن للإشعارات
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes slideIn {
+                from { transform: translateY(100px); opacity: 0; }
+                to { transform: translateY(0); opacity: 1; }
+            }
+            @keyframes slideOut {
+                from { transform: translateY(0); opacity: 1; }
+                to { transform: translateY(100px); opacity: 0; }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
